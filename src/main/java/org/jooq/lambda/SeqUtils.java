@@ -95,9 +95,9 @@ class SeqUtils {
                 // java.util.stream.StreamOpFlag.fromCharacteristics(Spliterator<?> spliterator)
                 // Currently, the point of this method is only to be used for
                 // optimisations (e.g. to avoid sorting a stream twice in a row)
-                return (Comparator) delegate.getComparator();
+                return (Comparator<? super U>) delegate.getComparator();
             }
-        }).onClose(() -> stream.close());
+        }).onClose(stream::close);
     }
     
     static <T> Map<?, Partition<T>> partitions(WindowSpecification<T> window, List<Tuple2<T, Long>> input) {
