@@ -68,9 +68,22 @@ class SeqUtils {
                 return Long.MAX_VALUE;
             }
 
+            /**
+             * This <code>Spliterator</code> always returns a subset of elements from the source <code>stream</code> so:
+             * - it cannot be <code>SIZED</code> nor <code>SUBSIZED</code> (some element may have been removed)
+             * - it is still <code>DISTINCT</code>, <code>NONNULL</code>, and <code>IMMUTABLE</code> (nothing added)
+             * - it is still <code>SORTED</code> (nothing reordered)
+             *
+             * Moreover:
+             * - we impose <code>ORDERED</code> because <code>Seq</code> is always ordered
+             * - we remove <code>CONCURRENT</code> because <code>Seq</code> is always sequential
+             *
+             * @see <a href="https://github.com/jOOQ/jOOL/issues/311">[#311]</a>
+             */
             @Override
             public int characteristics() {
-                return delegate.characteristics() & Spliterator.ORDERED;
+                return (delegate.characteristics() | Spliterator.ORDERED)
+                      & ~(Spliterator.SIZED | Spliterator.SUBSIZED | Spliterator.CONCURRENT);
             }
             
             @Override
